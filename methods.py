@@ -1,3 +1,8 @@
+from datetime import datetime
+from pytz import timezone
+from dateutil.relativedelta import relativedelta
+
+
 FIELDNAMES = [
     "geonameid", "name", "asciiname",
     "alternatenames", "latitude", "longtitude",
@@ -9,6 +14,7 @@ FIELDNAMES = [
 
 
 def get_dict_from_file():
+    """"The function read txt file and return list with dictionaries information about cities """
     list_of_geo = []
     result = []
     try:
@@ -26,6 +32,9 @@ def get_dict_from_file():
 
 
 def filter_cities_by_population(arr):
+    """The function takes argument-array with dictionary and filter it by population of city.
+    If population cities similar, function return first item from array.
+    """
     default_population = 0
     high_population_city = []
     for item in arr:
@@ -36,3 +45,38 @@ def filter_cities_by_population(arr):
         return high_population_city
     else:
         return arr[0]
+
+
+def check_latitude(arr):
+    """The function takes argument-array with dictionaries of cities and compare they which city is further north.
+       Return array with additional dictionary about northerly.
+       """
+    additional_info = {'higher_latitude': '', 'time_difference': ''}
+    if float(arr[0]['latitude'] > arr[1]['latitude']):
+        additional_info['higher_latitude'] = '{} situated further north than city {}'.format(
+            arr[0]['name'], arr[1]['name'])
+    else:
+        additional_info['higher_latitude'] = '{} situated further north than city {}'.format(
+            arr[1]['name'], arr[0]['name'])
+    arr.append(additional_info)
+    return check_time_zone(arr)
+
+
+def check_time_zone(arr):
+    """The function takes argument-array with dictionaries of cities and check they UTC time difference.
+        Return array with additional key about time-zone.
+    """
+    utc_now = timezone('utc').localize(datetime.utcnow())
+    city1_timezone = utc_now.astimezone(timezone(arr[0]['timezone'])).replace(tzinfo=None)
+    city2_timezone = utc_now.astimezone(timezone(arr[1]['timezone'])).replace(tzinfo=None)
+    offset = relativedelta(city1_timezone, city2_timezone)
+    if offset.hours and offset.hours > 0:
+        arr[2]['time_difference'] = '{} have difference time +{} hours from {}'.format(arr[0]['name'],
+                                                                                           offset.hours, arr[1]['name'])
+    elif offset.hours and offset.hours < 0:
+        arr[2]['time_difference'] = '{} have difference time {} hours from {}'.format(arr[0]['name'],
+                                                                                          offset.hours, arr[1]['name'])
+    else:
+        arr[2]['time_difference'] = '{} have the same UTC-time as city {}'.format(arr[0]['name'],
+                                                                                           arr[1]['name'])
+    return arr
