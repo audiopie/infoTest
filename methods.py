@@ -23,3 +23,16 @@ def get_dict_from_file():
     except FileNotFoundError:
         print("File 'RU.txt' must be in the same directory")
         exit()
+
+
+def filter_cities_by_population(arr):
+    default_population = 0
+    high_population_city = []
+    for item in arr:
+        if int(item["population"]) > default_population:
+            default_population = int(item["population"])
+            high_population_city = item
+    if high_population_city:
+        return high_population_city
+    else:
+        return arr[0]
