@@ -11,22 +11,18 @@ To Run script:
 
 ### Server supports the following methods: ###
 
-1. The method takes one argument `id` and return information about city. 
-`http://127.0.0.1:8000/geonameid/api/v1.0/?id=464173`
+1. The method takes one argument `id` and return information about city.  `http://127.0.0.1:8000/geonameid/api/v1.0/?id=464173`
 
 ![return city by geonameid](screenshots/id.jpg) 
 
-2. The method takes two arguments `page` and `amount` and return list of cities. 
-`http://127.0.0.1:8000/cities/api/v1.0/?page=2&amount=20`
+2. The method takes two arguments `page` and `amount` and return list of cities.  `http://127.0.0.1:8000/cities/api/v1.0/?page=2&amount=20`
 
 ![return list of cities by page and anount](screenshots/amout.jpg) 
 
-3. The function get two arguments cities name in cyrillic. Return information about cities includes which city is northerly, and their UTC time difference.
-`http://127.0.0.1:8000/twocities/api/v1.0//?first=city&second=city`
+3. The function get two arguments cities name in cyrillic. Return information about cities includes which city is northerly, and their UTC time difference.  `http://127.0.0.1:8000/twocities/api/v1.0//?first=city&second=city`
 
 ![return information about two cities](screenshots/twocities.jpg)
 
-4. The method is helper, takes argument like a half-word of city and return all cities matches it.
-`http://127.0.0.1:8000/matches/api/v1.0/?city=Сам`
+4. The method is helper, takes argument like a half-word of city and return all cities matches it.  `http://127.0.0.1:8000/matches/api/v1.0/?city=Сам`
 
 ![return list of matches cities](screenshots/matches.jpg)
