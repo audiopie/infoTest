@@ -1,5 +1,5 @@
 import re
-from flask import jsonify, request
+from flask import jsonify, request, make_response
 from transliterate import translit
 from app import app
 from methods import get_dict_from_file, filter_cities_by_population, check_latitude
@@ -57,7 +57,10 @@ def get_list_of_cities():
     start = (amount * (page - 1) - 1)
     end = (amount * page) - 1
     result = [city for city in GEO_CITIES_INFO[start:end]]
-    return jsonify(result)
+    if result:
+        return jsonify(result)
+    else:
+        return make_response("<h2>404 Error. Something went wrong, please check your page number or amount</h2>", 400)
 
 
 @app.route('/matches/api/v1.0/', methods=['GET'])
@@ -78,8 +81,7 @@ def match_cities():
         return jsonify("Here is not matches cities with name {}".format(city))
 
 
-
 if __name__ == '__main__':
     GEO_CITIES_INFO = get_dict_from_file()
-    app.run(host='127.0.0.1', port=8000, debug=True)
+    app.run(host='127.0.0.1', port=8000)
 
