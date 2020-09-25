@@ -1,4 +1,6 @@
+import re
 from flask import jsonify, request
+from transliterate import translit
 from app import app
 from methods import get_dict_from_file, filter_cities_by_population, check_latitude
 
@@ -34,7 +36,7 @@ def get_info_by_id():
     for items in GEO_CITIES_INFO:
         if items['geonameid'] == geo_id:
             return jsonify(items)
-    return {}
+    return jsonify('Here is not city with id {}'.format(geo_id))
 
 
 @app.route('/cities/api/v1.0/', methods=['GET'])
@@ -56,6 +58,25 @@ def get_list_of_cities():
     end = (amount * page) - 1
     result = [city for city in GEO_CITIES_INFO[start:end]]
     return jsonify(result)
+
+
+@app.route('/matches/api/v1.0/', methods=['GET'])
+def match_cities():
+    """The function return all matches cities"""
+    city = request.args.get('city', type=str).capitalize()
+    if not city.isascii():
+        city = translit(city, "ru", reversed=True)
+    result = []
+    reg_exp = r'^\b' + city + ''
+    for items in GEO_CITIES_INFO:
+        tmp = items['name']
+        if re.findall(reg_exp, tmp):
+            result.append(tmp)
+    if result:
+        return jsonify(result)
+    else:
+        return jsonify("Here is not matches cities with name {}".format(city))
+
 
 
 if __name__ == '__main__':
